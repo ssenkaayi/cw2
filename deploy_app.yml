@@ -1,0 +1,12 @@
+---
+- name: Deploy cw2-server image  (non-root)
+  hosts: k8s_nodes
+  become: false
+  tasks:
+
+    - name: Deploy cw2-server from DockerHub
+      shell: |
+        kubectl create deployment cw2-server --image=ssenkaaayi/cw2-server:1.0
+        kubectl expose deployment cw2-server --type=NodePort --port=8081
+      args:
+        executable: /bin/bash
