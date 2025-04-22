@@ -54,6 +54,15 @@ pipeline {
         }
       }
     }
+
+    stage('Deploying app') {
+
+      steps{
+        ansiblePlaybook credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy_app.yml', vaultTmpPath: ''
+      }
+    }
+
+    
   }
 }
 
