@@ -1,4 +1,5 @@
 pipeline {
+
   agent any
 
   environment {
@@ -7,7 +8,7 @@ pipeline {
   }
 
   stages {
-    
+
     stage('Build Docker Image') {
       steps {
         script {
@@ -54,12 +55,12 @@ pipeline {
       }
     }
 
-    stage('Deploy to Kubernetes') {
+    stage('Deploy App') {
       steps {
         sshagent(['private-key']) {
           sh '''
             echo "Running Ansible Playbook for Deployment..."
-            ansible-playbook -i dev.inv deploy_app.yml
+            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i dev.inv deploy_app.yml
           '''
         }
       }
