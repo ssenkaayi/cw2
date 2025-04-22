@@ -11,14 +11,6 @@ pipeline {
 
   stages {
 
-    stage('Clone Repo') {
-
-      steps {
-
-        git 'https://github.com/ssenkaayi/cw2.git'
-      }
-    }
-
     stage('Build Docker Image') {
 
       steps {
