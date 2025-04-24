@@ -1,5 +1,4 @@
 pipeline {
-
   agent any
 
   environment {
@@ -8,10 +7,10 @@ pipeline {
   }
 
   stages {
-
     stage('Build Docker Image') {
       steps {
         script {
+          echo "Building Docker image..."
           sh 'docker build -t $IMAGE_NAME .'
         }
       }
@@ -20,15 +19,12 @@ pipeline {
     stage('Test Container') {
       steps {
         script {
+          echo "Launching container from built image..."
           sh '''
-            echo "Launching container from built image..."
             docker run -d --name test-container $IMAGE_NAME
-
             sleep 2
-
             echo "Running test command inside container..."
             docker exec test-container ps aux
-
             docker stop test-container
             docker rm test-container
           '''
@@ -39,15 +35,11 @@ pipeline {
     stage('Push to DockerHub') {
       steps {
         script {
+          echo "Pushing image to DockerHub..."
           withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
             sh '''
-              echo "Logging in to DockerHub..."
               echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-              echo "Pushing image to DockerHub..."
               docker push $IMAGE_NAME
-
-              echo "Logout from DockerHub..."
               docker logout
             '''
           }
@@ -57,16 +49,18 @@ pipeline {
 
     stage('Deploy with Ansible') {
       steps {
-        ansiblePlaybook(
-          credentialsId: 'private-key',
-          disableHostKeyChecking: true,
-          installation: 'ansible',
-          inventory: 'dev.inv',
-          playbook: 'deploy_app.yml',
-          vaultTmpPath: ''
-        )
+        script {
+          echo "Deploying application with Ansible..."
+          ansiblePlaybook(
+            credentialsId: 'private-key',  // Ensure private key is added to Jenkins credentials
+            disableHostKeyChecking: true,  // Disable host key checking if necessary (may improve security)
+            installation: 'ansible',  // Ensure Ansible is installed and configured in Jenkins
+            inventory: 'dev.inv',  // Path to your Ansible inventory file
+            playbook: 'deploy_app.yml',  // Path to your Ansible playbook for deployment
+            vaultTmpPath: ''  // Adjust if you use Ansible Vault for secrets management
+          )
+        }
       }
     }
-
   }
 }
