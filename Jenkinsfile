@@ -25,6 +25,13 @@ pipeline {
         script {
           echo "Testing Docker container..."
           sh '''
+            # Remove the container if it already exists
+            if [ "$(docker ps -aq -f name=test-container)" ]; then
+              echo "Removing existing container named test-container..."
+              docker rm -f test-container
+            fi
+
+            # Run the container
             docker run -d --name test-container $IMAGE_NAME
             sleep 3
             docker exec test-container ps aux
@@ -60,7 +67,7 @@ pipeline {
             inventory: 'dev.inv',
             playbook: 'deploy_app.yml',
             disableHostKeyChecking: true
-            // No need for credentialsId if the private key is already in /var/lib/jenkins/.ssh
+            // credentialsId not required if Jenkins user can SSH using preloaded key
           )
         }
       }
