@@ -1,3 +1,4 @@
 [k8s_nodes]
-3.80.126.163 ansible_user=ubuntu
+
+3.80.126.163 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/my-key.pem
 
