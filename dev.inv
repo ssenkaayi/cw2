@@ -1,4 +1,4 @@
 [k8s_nodes]
 
-3.80.126.163 ansible_user=ec2-user 
+3.80.126.163 ansible_user=ubuntu
 
