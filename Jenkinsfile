@@ -7,4 +7,11 @@ pipeline {
     IMAGE_NAME = 'ssenkaaayi/cw2-server:1.0'
   }
 
+  (Checking Git){
+    stages{
+          echo "hello worls"
+    }
+
+  }
+
 }
