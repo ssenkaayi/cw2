@@ -55,16 +55,17 @@ pipeline {
       }
     }
 
-    stage('Deploy App') {
-      steps {
-        sshagent(['private-key']) {
-          sh '''
-            echo "Running Ansible Playbook for Deployment..."
-            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i dev.inv deploy_app.yml
-          '''
-        }
+  stage('Deploy App') {
+    steps {
+      sshagent(['private-key']) {
+        sh '''
+          echo "Running Ansible Playbook for Deployment..."
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i dev.inv deploy_app.yml
+        '''
       }
     }
+  }
+
 
   }
 }
