@@ -25,36 +25,6 @@
         dest: /usr/local/bin/minikube
         mode: '0755'
 
-- name: Start Minikube & Deploy app (non-root)
-  hosts: localhost
-  become: false
-  tasks:
 
-    - name: Start Minikube using Docker driver
-      shell: |
-        minikube start --driver=docker
-      environment:
-        CHANGE_MINIKUBE_NONE_USER: "true"
-        MINIKUBE_IN_STYLE: "false"
-      args:
-        executable: /bin/bash
 
-    - name: Delete existing cw2-server deployment and service if they exist
-      shell: |
-        kubectl delete deployment cw2-server --ignore-not-found
-        kubectl delete service cw2-server --ignore-not-found
-      args:
-        executable: /bin/bash
-
-    - name: Deploy cw2-server from DockerHub
-      shell: |
-        kubectl create deployment cw2-server --image=ssenkaaayi/cw2-server:1.0
-        kubectl expose deployment cw2-server --type=NodePort --port=8081
-      args:
-        executable: /bin/bash
-
-    - name: Scale deployment to 3 replicas
-      shell: kubectl scale deployment cw2-server --replicas=3
-      args:
-        executable: /bin/bash
 
