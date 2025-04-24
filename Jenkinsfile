@@ -11,10 +11,10 @@ pipeline {
     stage('Build Docker Image') {
       steps {
         script {
-          echo "📦 Building Docker image..."
+          echo "Building Docker image..."
           sh '''
             docker build -t $IMAGE_NAME . > docker_build.log 2>&1
-            echo "✅ Build complete. Log stored in docker_build.log"
+            echo "Build complete. Log stored in docker_build.log"
           '''
         }
       }
@@ -23,14 +23,14 @@ pipeline {
     stage('Test Container') {
       steps {
         script {
-          echo "🧪 Testing Docker container..."
+          echo "Testing Docker container..."
           sh '''
             docker run -d --name test-container $IMAGE_NAME
             sleep 3
             docker exec test-container ps aux
             docker stop test-container
             docker rm test-container
-            echo "✅ Container tested and removed."
+            echo "Container tested and removed."
           '''
         }
       }
@@ -39,13 +39,13 @@ pipeline {
     stage('Push to DockerHub') {
       steps {
         script {
-          echo "🚀 Pushing image to DockerHub..."
+          echo "Pushing image to DockerHub..."
           withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
             sh '''
               echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
               docker push $IMAGE_NAME
               docker logout
-              echo "✅ Image pushed to DockerHub."
+              echo "Image pushed to DockerHub."
             '''
           }
         }
@@ -55,7 +55,7 @@ pipeline {
     stage('Deploy with Ansible') {
       steps {
         script {
-          echo "🛠️ Deploying application with Ansible..."
+          echo "Deploying application with Ansible..."
           ansiblePlaybook(
             inventory: 'dev.inv',
             playbook: 'deploy_app.yml',
