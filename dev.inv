@@ -1,4 +1,4 @@
+
 [k8s_nodes]
 
-54.82.67.117 ansible_user=ubuntu
-
+54.82.67.117 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/labsuser.pem
