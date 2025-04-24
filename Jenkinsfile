@@ -7,11 +7,15 @@ pipeline {
   }
 
   stages {
+
     stage('Build Docker Image') {
       steps {
         script {
-          echo "Building Docker image..."
-          sh 'docker build -t $IMAGE_NAME .'
+          echo "📦 Building Docker image..."
+          sh '''
+            docker build -t $IMAGE_NAME . > docker_build.log 2>&1
+            echo "✅ Build complete. Log stored in docker_build.log"
+          '''
         }
       }
     }
@@ -19,14 +23,14 @@ pipeline {
     stage('Test Container') {
       steps {
         script {
-          echo "Launching container from built image..."
+          echo "🧪 Testing Docker container..."
           sh '''
             docker run -d --name test-container $IMAGE_NAME
-            sleep 2
-            echo "Running test command inside container..."
+            sleep 3
             docker exec test-container ps aux
             docker stop test-container
             docker rm test-container
+            echo "✅ Container tested and removed."
           '''
         }
       }
@@ -35,12 +39,13 @@ pipeline {
     stage('Push to DockerHub') {
       steps {
         script {
-          echo "Pushing image to DockerHub..."
+          echo "🚀 Pushing image to DockerHub..."
           withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
             sh '''
               echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
               docker push $IMAGE_NAME
               docker logout
+              echo "✅ Image pushed to DockerHub."
             '''
           }
         }
@@ -50,13 +55,12 @@ pipeline {
     stage('Deploy with Ansible') {
       steps {
         script {
-          echo "Deploying application with Ansible..."
+          echo "🛠️ Deploying application with Ansible..."
           ansiblePlaybook(
-            disableHostKeyChecking: true,  // Disable host key checking if necessary (may improve security)
-            installation: 'ansible',  // Ensure Ansible is installed and configured in Jenkins
-            inventory: 'dev.inv',  // Path to your Ansible inventory file
-            playbook: 'deploy_app.yml',  // Path to your Ansible playbook for deployment
-            vaultTmpPath: ''  // Adjust if you use Ansible Vault for secrets management
+            inventory: 'dev.inv',
+            playbook: 'deploy_app.yml',
+            disableHostKeyChecking: true
+            // No need for credentialsId if the private key is already in /var/lib/jenkins/.ssh
           )
         }
       }
