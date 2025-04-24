@@ -52,7 +52,6 @@ pipeline {
         script {
           echo "Deploying application with Ansible..."
           ansiblePlaybook(
-            credentialsId: 'private-key',  // Ensure private key is added to Jenkins credentials
             disableHostKeyChecking: true,  // Disable host key checking if necessary (may improve security)
             installation: 'ansible',  // Ensure Ansible is installed and configured in Jenkins
             inventory: 'dev.inv',  // Path to your Ansible inventory file
