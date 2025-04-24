@@ -1,6 +1,6 @@
 ---
 - name: Deploy cw2-server image  (non-root)
-  hosts: k8s_nodes
+  hosts: production-server
   become: false
   tasks:
 
