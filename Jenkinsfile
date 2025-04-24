@@ -9,11 +9,6 @@ pipeline {
 
   stages {
 
-    stage('Checking Git') {
-      steps {
-        echo 'hello git'
-      }
-    }
 
   }
 }
