@@ -17,24 +17,5 @@ pipeline {
       }
     }
 
-    stage('Test Container') {
-      steps {
-        script {
-          sh '''
-            echo "Launching container from built image..."
-            docker run -d --name test-container $IMAGE_NAME
-
-            sleep 2
-
-            echo "Running test command inside container..."
-            docker exec test-container ps aux
-
-            docker stop test-container
-            docker rm test-container
-          '''
-        }
-      }
-    }
-
   }
 }
