@@ -1,29 +1,24 @@
 ---
-- name: Setup Kubernetes & Deploy cw2-server
+- name: Deploy cw2-server image  (non-root)
   hosts: k8s_nodes
-  become: true
+  become: false
   tasks:
 
-    - name: Install required packages
-      apt:
-        name:
-          - curl
-          - apt-transport-https
-          - ca-certificates
-        state: present
-        update_cache: yes
+    - name: Delete existing cw2-server deployment and service if they exist
+      shell: |
+        kubectl delete deployment cw2-server --ignore-not-found
+        kubectl delete service cw2-server --ignore-not-found
+      args:
+        executable: /bin/bash
 
-    - name: Download kubectl binary
-      get_url:
-        url: https://dl.k8s.io/release/v1.29.3/bin/linux/amd64/kubectl
-        dest: /usr/local/bin/kubectl
-        mode: '0755'
+    - name: Deploy cw2-server from DockerHub
+      shell: |
+        kubectl create deployment cw2-server --image=ssenkaaayi/cw2-server:1.0
+        kubectl expose deployment cw2-server --type=NodePort --port=8081
+      args:
+        executable: /bin/bash
 
-    - name: Download minikube binary
-      get_url:
-        url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-        dest: /usr/local/bin/minikube
-        mode: '0755'
+
 
 
 
