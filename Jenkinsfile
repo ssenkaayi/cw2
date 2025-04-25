@@ -11,7 +11,7 @@ pipeline {
     stage('Build Docker Image') {
       steps {
         script {
-          echo "Building Docker image..."
+          echo "Building Docker image...."
           sh '''
             docker build -t $IMAGE_NAME . > docker_build.log 2>&1
             echo "Build complete. Log stored in docker_build.log"
