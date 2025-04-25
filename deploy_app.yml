@@ -1,5 +1,5 @@
 ---
-- name: Deploy cw2-server image  (non-root)
+- name: Deploy cw2-server image (non-root)
   hosts: production-server
   become: false
   tasks:
@@ -11,12 +11,13 @@
       args:
         executable: /bin/bash
 
-    - name: Deploy cw2-server from DockerHub
+    - name: Deploy cw2-server from DockerHub using passed image tag
       shell: |
-        kubectl create deployment cw2-server --image=ssenkaaayi/cw2-server:1.0
+        kubectl create deployment cw2-server --image={{ image_name }}
         kubectl expose deployment cw2-server --type=NodePort --port=8081
       args:
         executable: /bin/bash
+
 
 
 
